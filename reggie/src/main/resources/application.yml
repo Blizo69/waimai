@@ -26,3 +26,5 @@ mybatis-plus:
 reggie:
   path: C:\\reggie\
 #  path: /usr/local/app/image/
+
+#  path: /usr/local/app/image/
