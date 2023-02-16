@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +48,7 @@ public class SetmealController {
 
     @PostMapping()
     @Transactional
+    @CacheEvict(value = "setmealCache" ,allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto){
 //        log.info(setmealDto.toString());
         //获取setmealDto中的setmeal信息
@@ -131,6 +134,7 @@ public class SetmealController {
     }
 
     @PutMapping()
+    @CacheEvict(value = "setmealCache" ,allEntries = true)
     public R<String> update(@RequestBody SetmealDto setmealDto){
 
         //获取setmealDto中setmeal的信息
@@ -166,6 +170,7 @@ public class SetmealController {
      * @return
      */
     @DeleteMapping()
+    @CacheEvict(value = "setmealCache" ,allEntries = true)
     public R<String> deleteByIds(@RequestParam List<Long> ids){
         //先删除套餐中存在setmealDish中的菜品信息和套餐的图片文件
         ids.stream().map((item) -> {
@@ -197,6 +202,7 @@ public class SetmealController {
      * @return
      */
     @PostMapping("/status/0")
+    @CacheEvict(value = "setmealCache" ,allEntries = true)
     public R<String> updateStatusTo0ByIds(@RequestParam List<Long> ids){
         //修改ids中id对应的套餐的状态status为0
         ids.stream().map((item) -> {
@@ -216,6 +222,7 @@ public class SetmealController {
      * @return
      */
     @PostMapping("/status/1")
+    @CacheEvict(value = "setmealCache" ,allEntries = true)
     public R<String> updateStatusTo1ByIds(@RequestParam List<Long> ids){
         //修改ids中id对应的套餐的状态status为1
         ids.stream().map((item) -> {
@@ -235,6 +242,7 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(setmeal.getCategoryId() != null,Setmeal::getCategoryId,setmeal.getCategoryId());
